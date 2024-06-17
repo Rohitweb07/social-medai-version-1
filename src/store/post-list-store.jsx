@@ -4,6 +4,7 @@ export const PostList = createContext({
   postList: [],
   addPost: () => {},
   deletePost: () => {},
+  addIntialPost: () => {},
 });
 
 const postListReducer = (currentPostList, action) => {
@@ -12,6 +13,8 @@ const postListReducer = (currentPostList, action) => {
     newPostList = currentPostList.filter(
       (post) => post.id !== action.payload.postId
     );
+  } else if (action.type == "ADD_INITIAL_POSTS") {
+    newPostList = [...action.payload.posts, ...currentPostList];
   } else if (action.type == "ADD_POST") {
     newPostList = [action.payload, ...currentPostList];
   }
@@ -19,13 +22,10 @@ const postListReducer = (currentPostList, action) => {
 };
 
 const PostListProvider = ({ children }) => {
-  const [postList, dispatchPostList] = useReducer(
-    postListReducer,
-    DEFAULT_POST_LIST
-  );
+  const [postList, dispatchPostList] = useReducer(postListReducer, []);
 
-  const addPost = (userId, title, body, reaction, tags) => {
-    console.log(userId, title, body, reaction, tags);
+  const addPost = (userId, title, body, reactions, tags) => {
+    console.log(userId, title, body, reactions, tags);
     dispatchPostList({
       type: "ADD_POST",
       payload: {
@@ -33,8 +33,17 @@ const PostListProvider = ({ children }) => {
         userId: userId,
         title: title,
         body: body,
-        reaction: reaction,
+        reactions: reactions,
         tags: tags,
+      },
+    });
+  };
+
+  const addIntialPost = (posts) => {
+    dispatchPostList({
+      type: "ADD_INITIAL_POSTS",
+      payload: {
+        posts,
       },
     });
   };
@@ -50,31 +59,13 @@ const PostListProvider = ({ children }) => {
   };
   return (
     <>
-      <PostList.Provider value={{ postList, addPost, deletePost }}>
+      <PostList.Provider
+        value={{ postList, addPost, deletePost, addIntialPost }}
+      >
         {children}
       </PostList.Provider>
     </>
   );
 };
-
-const DEFAULT_POST_LIST = [
-  {
-    id: "1",
-    title: "Going to Noida",
-    body: "Hii!! friend, i am going to Noida to explore my future this jounery start for a getting a job",
-    reaction: 2,
-    userId: "99",
-    tags: ["vaction", "Job", "softwereEngineering"],
-  },
-
-  {
-    id: "2",
-    title: "Visiting Lotus Temple",
-    body: "Hii!! friend, i am on Lotus temple this place is so much beautifull and awasome and clean enjoying my self ",
-    reaction: 16,
-    userId: "100",
-    tags: ["vaction", "Toursim", "Beautifullgirl", "enjoying"],
-  },
-];
 
 export default PostListProvider;
