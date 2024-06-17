@@ -8,6 +8,7 @@
 
 .sidebar{
   min-height: 800px;
+  width:200px !important;
 }
 
 .post-card{
@@ -27,4 +28,10 @@
 
 .deletepostbtn:hover{
    cursor:pointer;
+}
+
+.createPost{
+  width: 50%;
+  margin: auto;
+  margin-top: 50px;
 }
